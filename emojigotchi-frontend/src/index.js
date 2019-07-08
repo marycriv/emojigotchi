@@ -1,9 +1,11 @@
 const petContainer = document.querySelector("#pet-container")
-
+const welcomeMsg = document.querySelector("h2")
+const innerContainer = document.querySelector("#inner-container")
+let currentUser
 
 
 function loadLoginForm() {
-    petContainer.innerHTML =
+    innerContainer.innerHTML =
         `<form id='login-form'>
             <label for='username'>Username:</label><br>
             <input name="username" id="username">
@@ -32,5 +34,10 @@ petContainer.addEventListener('submit', e => {
         body: JSON.stringify(data)
     })
     .then(resp => resp.json())
-    .then(json => console.log(json))
+    .then(json => {
+        welcomeMsg.innerText = `Hello, ${json.username}`
+        innerContainer.innerHTML = `
+            GAME GOES HERE
+        `
+    })
 })
