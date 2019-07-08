@@ -5,3 +5,11 @@
     background: #cccccc;
     text-align: center;
 }
+
+#love-for-owner {
+  margin: auto;
+  width: 20%;
+  height: 600px;
+  background: #ff000;
+  text-align: right;
+}

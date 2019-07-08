@@ -2,6 +2,7 @@ const petContainer = document.querySelector("#pet-container")
 const welcomeMsg = document.querySelector("h2")
 const petNameHeader = document.querySelector("h3")
 const innerContainer = document.querySelector("#inner-container")
+const loveBar = document.querySelector("#love-for-owner")
 let currentUserId
 
 
