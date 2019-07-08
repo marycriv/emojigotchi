@@ -31,36 +31,36 @@ function nameYourGotchi() {
 // Creates the game
 function gotchiGame(userId, currentPet) {
   innerContainer.innerHTML = `
-    <div id="the-pet">😀</div>
-    <p>${currentPet.level}</p>
-    <div id="love-for-owner">❤️</div>
+    <div id="the-pet" data-id=${currentPet.id}>😀</div>
+    <div id="level">${currentPet.level}</div>
+    <div id="love-from-owner" data-id=${currentPet.id}>❤️</div>
   `
-  innerContainer.addEventListener('click', e => {
-    e.preventDefault()
-    console.log(e.target)
-    if (e.target.id === "the-pet") {
-      let levelOfPet = currentPet.level += 1
-      console.log(currentPet.id)
-      fetch(`http://localhost:3000/pets/${currentPet.id}`, {
-          method: "PATCH",
-          headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-          },
-          body: JSON.stringify({
-              "level": levelOfPet
-          })
-      })
-      .then(resp => resp.json())
-      .then(petsJson => {
-        innerContainer.innerHTML = `
-          <div id="the-pet">😀</div>
-          <p>${currentPet.level}</p>
-          <div id="love-for-owner">❤️</div>
-        `
-      })
-    }
-  }) // love click event listener
+  innerContainer.addEventListener('click', likeMyPet) // love click event listener
+}
+
+function likeMyPet(e) {
+  e.preventDefault()
+  if (e.target.id === "the-pet" || e.target.id === "love-from-owner") {
+    let currentLevel = parseInt(document.querySelector("#level").innerText)
+    fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify({
+            "level": currentLevel + 1
+        })
+    })
+    .then(resp => resp.json())
+    .then(petJson => {
+      innerContainer.innerHTML = `
+        <div id="the-pet" data-id=${petJson.id}>😀</div>
+        <div id="level">${petJson.level}</div>
+        <div id="love-from-owner" data-id=${petJson.id}>❤️</div>
+      `
+    })
+  }
 }
 
 loadLoginForm()
