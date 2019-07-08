@@ -11,15 +11,36 @@ class PetsController < ApplicationController
   end
 
   def create
-    pet = Pet.create(pet_params)
+    pet = Pet.find_by(user_id: params[:user_id], name: params[:name])
+    if !pet
+      pet = Pet.create(pet_params)
+    end
     render json: pet
+  end
+
+  def edit
+    pet = Pet.find(params[:id])
+  end
+
+  def update
+    pet = Pet.find(params[:id])
+    pet.update(pet_params)
+    render json: pet
+  end
+
+  def show
+      pet = Pet.find(params[:id])
+      render json: pet.to_json(:include => {
+      :user => {:only => [:id, :username]}
+      }, :except => [:created_at, :updated_at])
   end
 
   private
 
   def pet_params
     # need to set defaults
-    params.require(:pet).permit(:user_id, :name, :level)
+    defaults = { level: 0 }
+    params.require(:pet).permit(:user_id, :name, :level).reverse_merge(defaults)
   end
 
 end

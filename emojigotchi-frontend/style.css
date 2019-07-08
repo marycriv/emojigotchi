@@ -7,9 +7,15 @@
 }
 
 #love-for-owner {
+  margin-left: 85%;
+  width: 10%;
+  height: 50px;
+  background: #fff;
+  text-align: center;
+}
+
+#the-pet {
   margin: auto;
-  width: 20%;
-  height: 600px;
-  background: #ff000;
-  text-align: right;
+  height: 100px;
+  text-align: center;
 }
