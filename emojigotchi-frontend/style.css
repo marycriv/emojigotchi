@@ -1,5 +1,10 @@
-#pet-container {
+.pet-container {
+  display: flex;
+  justify-content: center;
+}
 
+.center {
+  width: 800px;
 }
 
 #inner-container {
@@ -65,5 +70,28 @@
   color: white;
   font-weight: bold;
   font-size: 3em;
+  text-align: center;
+}
+
+.user-info-container {
+  display: flex;
+  -webkit-flex-flow: row;
+  justify-content: space-between;
+  width: 800px;
+  margin: auto;
+}
+
+.user-info-item {
+  background: purple;
+  padding: 5px;
+  width: 150px;
+  height: 20px;
+  margin-top: 10px;
+
+
+  line-height: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
   text-align: center;
 }

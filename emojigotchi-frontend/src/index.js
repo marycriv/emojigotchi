@@ -1,9 +1,10 @@
-const petContainer = document.querySelector("#pet-container")
+const petContainer = document.querySelector(".pet-container")
 const welcomeMsg = document.querySelector("h2")
 const petNameHeader = document.querySelector("h3")
 const innerContainer = document.querySelector("#inner-container")
-const loveBar = document.querySelector("#love-for-owner")
+const loveBar = document.querySelector("#pet-stat-1-love")
 const rightContainer = document.querySelector("#right-container")
+const userInfoContainer = document.querySelector(".user-info-container")
 let currentUserId
 
 
@@ -21,7 +22,7 @@ function loadLoginForm() {
 function nameYourGotchi() {
   innerContainer.innerHTML =
   `<form id='emoji-name-form'>
-      <label for='name'>Name:</label><br>
+      <label for='name'>New Pet's Name:</label><br>
       <input name="name" id="name">
   </form>
 
@@ -36,18 +37,18 @@ function gotchiGame(userId, currentPet) {
   `
   rightContainer.innerHTML = `
   <ul class="pet-stats-container">
-    <li id="pet-stat-1-love" class="pet-stats-item">❤️</li>
+    <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</li>
     <li id="pet-stat-2-food" class="pet-stats-item">🍏</li>
-    <li id="pet-stat-1-level" class="pet-stats-item">${currentPet.level}</li>
+    <li id="level" class="pet-stats-item">${currentPet.level}</li>
     <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
   </ul>
   `
-  innerContainer.addEventListener('click', likeMyPet) // love click event listener
+  petContainer.addEventListener('click', likeMyPet) // love click event listener
 }
 
 function likeMyPet(e) {
   e.preventDefault()
-  if (e.target.id === "the-pet" || e.target.id === "love-from-owner") {
+  if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
         method: "PATCH",
@@ -63,8 +64,14 @@ function likeMyPet(e) {
     .then(petJson => {
       innerContainer.innerHTML = `
         <div id="the-pet" data-id=${petJson.id}>😀</div>
-        <div id="level">${petJson.level}</div>
-        <div id="love-from-owner" data-id=${petJson.id}>❤️</div>
+      `
+      rightContainer.innerHTML = `
+      <ul class="pet-stats-container">
+        <li id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item">❤️</li>
+        <li id="pet-stat-2-food" class="pet-stats-item">🍏</li>
+        <li id="level" class="pet-stats-item">${petJson.level}</li>
+        <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+      </ul>
       `
     })
   }
@@ -87,7 +94,8 @@ petContainer.addEventListener('submit', e => {
     .then(resp => resp.json())
     .then(userJson => {
         currentUserId = userJson.id
-        welcomeMsg.innerText = `Hello, ${userJson.username}`
+        userInfoContainer.innerHTML = `<div class="user-info-item">Name: ${userJson.username}</div>`
+
         nameYourGotchi()
 
         petContainer.addEventListener('click', e => {
@@ -108,8 +116,11 @@ petContainer.addEventListener('submit', e => {
             .then(resp => resp.json())
             .then(petsJson => {
               currentPetId = petsJson.id
-              petNameHeader.innerText = `Your pet's name is: ${petsJson.name} & its id is ${currentPetId}`
-
+              
+              userInfoContainer.innerHTML += `
+              <div class="user-info-item">Pet name: ${petsJson.name}</div>
+              <div class="user-info-item">Pet id: ${currentPetId}</div>
+              `
               //Calls on gotchi game function with user & pet ids
               gotchiGame(currentUserId, petsJson)
             }) // end petsJson
