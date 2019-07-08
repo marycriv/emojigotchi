@@ -1,9 +1,23 @@
+#pet-container {
+
+}
+
 #inner-container {
     margin: auto;
-    width: 85%;
+    width: 600px;
+    float: left;
     height: 600px;
     background: #cccccc;
     text-align: center;
+}
+
+#right-container {
+  margin: auto;
+  width: 200px;
+  float: left;
+  height: 600px;
+  background: #000;
+  text-align: center;
 }
 
 #love-for-owner {
@@ -17,5 +31,39 @@
 #the-pet {
   margin: auto;
   height: 100px;
+  text-align: center;
+}
+
+@import "compass/css3";
+
+.pet-stats-container {
+  padding: 0;
+  margin: auto;
+  list-style: none;
+  /* padding-left: 20%; */
+  margin-top: 0%;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  -webkit-flex-flow: column;
+  justify-content: space-around;
+}
+
+.pet-stats-item {
+  background: pink;
+  padding: 5px;
+  width: 100px;
+  height: 100px;
+  margin-top: 10px;
+  margin-left: 23%;
+
+  line-height: 100px;
+  color: white;
+  font-weight: bold;
+  font-size: 3em;
   text-align: center;
 }

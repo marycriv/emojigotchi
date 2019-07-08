@@ -3,6 +3,7 @@ const welcomeMsg = document.querySelector("h2")
 const petNameHeader = document.querySelector("h3")
 const innerContainer = document.querySelector("#inner-container")
 const loveBar = document.querySelector("#love-for-owner")
+const rightContainer = document.querySelector("#right-container")
 let currentUserId
 
 
@@ -32,8 +33,14 @@ function nameYourGotchi() {
 function gotchiGame(userId, currentPet) {
   innerContainer.innerHTML = `
     <div id="the-pet" data-id=${currentPet.id}>😀</div>
-    <div id="level">${currentPet.level}</div>
-    <div id="love-from-owner" data-id=${currentPet.id}>❤️</div>
+  `
+  rightContainer.innerHTML = `
+  <ul class="pet-stats-container">
+    <li id="pet-stat-1-love" class="pet-stats-item">❤️</li>
+    <li id="pet-stat-2-food" class="pet-stats-item">🍏</li>
+    <li id="pet-stat-1-level" class="pet-stats-item">${currentPet.level}</li>
+    <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+  </ul>
   `
   innerContainer.addEventListener('click', likeMyPet) // love click event listener
 }
