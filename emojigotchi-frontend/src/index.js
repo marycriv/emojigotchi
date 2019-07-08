@@ -1,6 +1,9 @@
 const petContainer = document.querySelector("#pet-container")
+
+
+
 function loadLoginForm() {
-    petContainer.innerHTML = 
+    petContainer.innerHTML =
         `<form id='login-form'>
             <label for='username'>Username:</label><br>
             <input name="username" id="username">
@@ -21,7 +24,7 @@ petContainer.addEventListener('submit', e => {
         "username": e.target.username.value,
         "password": e.target.password.value
     }
-    fetch("http://localhost:3000", {
+    fetch("http://localhost:3000/users", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -30,5 +33,10 @@ petContainer.addEventListener('submit', e => {
         body: JSON.stringify(data)
     })
     .then(resp => resp.json())
-    .then(json => console.log(json))
+    .then((jsonData) => {
+      resolve(jsonData ? JSON.parse(jsonData) : {})
+    })
+    .catch((error) => {
+      reject(error)
+    })
 })
