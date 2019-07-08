@@ -19,7 +19,6 @@ function loadLoginForm() {
 loadLoginForm()
 petContainer.addEventListener('submit', e => {
     e.preventDefault()
-    console.log(e.target.username.value)
     const data = {
         "username": e.target.username.value,
         "password": e.target.password.value
@@ -33,10 +32,5 @@ petContainer.addEventListener('submit', e => {
         body: JSON.stringify(data)
     })
     .then(resp => resp.json())
-    .then((jsonData) => {
-      resolve(jsonData ? JSON.parse(jsonData) : {})
-    })
-    .catch((error) => {
-      reject(error)
-    })
+    .then(json => console.log(json))
 })
