@@ -9,9 +9,6 @@ function loadLoginForm() {
         `<form id='login-form'>
             <label for='username'>Username:</label><br>
             <input name="username" id="username">
-            <br>
-            <label for='password'>Password:</label><br>
-            <input name="password" id="password">
         </form>
 
         <button type="submit" form="login-form" value="Submit">Submit</button>
@@ -22,8 +19,7 @@ loadLoginForm()
 petContainer.addEventListener('submit', e => {
     e.preventDefault()
     const data = {
-        "username": e.target.username.value,
-        "password": e.target.password.value
+        "username": e.target.username.value
     }
     fetch("http://localhost:3000/users", {
         method: "POST",
@@ -42,4 +38,3 @@ petContainer.addEventListener('submit', e => {
         `
     })
 })
-
