@@ -77,9 +77,9 @@ function gotchiGame(userId, currentPet) {
     <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
   </ul>
   `
-  petContainer.addEventListener('click', likeMyPet) // love click event listener
+  rightContainer.addEventListener('click', likeMyPet) // love click event listener
   //gameStarted = true
- 
+
 }
 
 function likeMyPet(e) {
@@ -229,7 +229,7 @@ function stopBounce() {
   innerContainer.lastElementChild.remove()
   const thePet = document.querySelector("#the-pet")
   thePet.className = ""
-  petContainer.className = "pet-container" 
+  petContainer.className = "pet-container"
 }
 
 let decreaseLevel = setInterval(function() {
