@@ -10,12 +10,14 @@ let currentUserId
 
 function loadLoginForm() {
     innerContainer.innerHTML =
-        `<form id='login-form'>
+        `
+        <form id='login-form'>
             <label for='username'>Username:</label><br>
             <input name="username" id="username">
         </form>
 
         <button type="submit" form="login-form" value="Submit">Submit</button>
+
       `
 }
 
@@ -116,7 +118,7 @@ petContainer.addEventListener('submit', e => {
             .then(resp => resp.json())
             .then(petsJson => {
               currentPetId = petsJson.id
-              
+
               userInfoContainer.innerHTML += `
               <div class="user-info-item">Pet name: ${petsJson.name}</div>
               <div class="user-info-item">Pet id: ${currentPetId}</div>
