@@ -7,6 +7,7 @@ const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 
+let gameStarted = false
 
 let currentUserId
 
@@ -61,6 +62,8 @@ function gotchiGame(userId, currentPet) {
   </ul>
   `
   petContainer.addEventListener('click', likeMyPet) // love click event listener
+  //gameStarted = true
+ 
 }
 
 function likeMyPet(e) {
@@ -146,6 +149,7 @@ petContainer.addEventListener('submit', e => {
               `
               //Calls on gotchi game function with user & pet ids
               gotchiGame(currentUserId, petsJson)
+              decreaseLevel()
             }) // end petsJson
           }
         })// end name submit event listener
@@ -174,7 +178,7 @@ function drop(e) {
           "Accept": "application/json"
       },
       body: JSON.stringify({
-          "level": parseInt(level.innerText) + 1
+          "level": parseInt(level.innerText) + 3
       })
   })
   .then(resp => resp.json())
@@ -198,11 +202,11 @@ function getRandomInt(min, max) {
 }
 
 function bouncePet() {
-  innerContainer.innerHTML += `<h2>YAY FOOD!</h2>`
+  innerContainer.innerHTML += `<h2>YAY FOOD! +3 </h2>`
   const thePet = document.querySelector("#the-pet")
   thePet.className = "box bounce"
   petContainer.className = "pet-container stage"
-  setTimeout(stopBounce, 6010);
+  setTimeout(stopBounce, 2010);
 }
 
 function stopBounce() {
@@ -210,4 +214,28 @@ function stopBounce() {
   const thePet = document.querySelector("#the-pet")
   thePet.className = ""
   petContainer.className = "pet-container" 
+}
+
+function depreciateScore() {
+  const thePet = document.querySelector("#the-pet")
+  const theLevel = document.querySelector("#level")
+  fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      level: parseInt(theLevel.innerText) - 1
+    })
+  })
+  .then(resp => resp.json())
+  .then(json => {
+    thePet.dataset.level = json.level
+    theLevel.innerText = json.level
+  })
+}
+
+function decreaseLevel() {
+  setInterval(depreciateScore, 2000)
 }
