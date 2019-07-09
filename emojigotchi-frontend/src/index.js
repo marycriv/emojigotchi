@@ -6,6 +6,7 @@ const loveBar = document.querySelector("#pet-stat-1-love")
 const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
+const wholeAppHeader = document.querySelector("#overall-app-header")
 
 let gameStarted = false
 
@@ -16,12 +17,16 @@ let currentUserId
 function loadLoginForm() {
     innerContainer.innerHTML =
         `
-        <form id='login-form'>
+        <div class="nes-field is-inline">
+        <form style="margin:auto;margin-top:25%;" id='login-form'>
             <label for='username'>Username:</label><br>
-            <input name="username" id="username" value="a">
-        </form>
+            <input name="username" id="username" value="a" class="nes-input is-success">
+            <br>
+            <button class="nes-btn is-success" type="submit" form="login-form" value="Submit">Submit</button>
+            </form>
 
-        <button class="nes-btn is-success" type="submit" form="login-form" value="Submit">Submit</button>
+        </div>
+
 
       `
 }
@@ -31,18 +36,20 @@ function nameYourGotchi(userInfo) {
   .then(resp => resp.json())
   .then(petsJson => {
     innerContainer.innerHTML =
-    `<form id='emoji-name-form'>
-        <label for='name'>New Pet's Name:</label><br>
-        <input name="name" id="name" value="bepis">
-    </form>
+      `
+      <div><h2>Username: ${userInfo.username}</h2></div>
 
-    <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
-
+      <div class="nes-field is-inline">
+        <form id='emoji-name-form' style="margin:auto;margin-top:10%;">
+            <label  for='name'>New Pet's Name:</label><br>
+            <input name="name" id="name" value="bepis" class="nes-input is-success">
+            <br>
+            <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
+        </form>
+    </div>
     <br>
-    <div><h2>Username: ${userInfo.username}</h2></div>
     <br>
     <div><h3>Pets:</h3></div>
-
     `
     petsJson.forEach(function(element) {
       if (element.user_id === userInfo.id) {
@@ -55,8 +62,10 @@ function nameYourGotchi(userInfo) {
 
 // Creates the game
 function gotchiGame(userId, currentPet) {
+
   innerContainer.innerHTML = `
     <div id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
+
   `
   rightContainer.innerHTML = `
   <ul class="pet-stats-container">
@@ -136,7 +145,7 @@ petContainer.addEventListener('submit', e => {
     .then(resp => resp.json())
     .then(userJson => {
         currentUserId = userJson.id
-        userInfoContainer.innerHTML = `<div class="user-info-item">Name: ${userJson.username}</div>`
+        wholeAppHeader.innerHTML = `<b>Username:</b> ${userJson.username} ▪️`
 
         nameYourGotchi(userJson)
 
@@ -159,9 +168,9 @@ petContainer.addEventListener('submit', e => {
             .then(petsJson => {
               currentPetId = petsJson.id
 
-              userInfoContainer.innerHTML += `
-              <div class="user-info-item">Pet name: ${petsJson.name}</div>
-              <div class="user-info-item">Pet id: ${currentPetId}</div>
+              wholeAppHeader.innerHTML += `
+              <b>Pet name:</b> ${petsJson.name} ▪️
+              <b>Pet id:</b> ${currentPetId}
               `
               //Calls on gotchi game function with user & pet ids
               gotchiGame(currentUserId, petsJson)
@@ -256,7 +265,7 @@ let decreaseLevel = setInterval(function() {
     .then(level => {
       if (level <= 0) {
         clearInterval(decreaseLevel);
-        thePet.innerHTML = `<h2>🚑😵👻🔥</h2>
+        thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
         <h5>GAME OVER</h5>`
         //NEED TO REMOVE EVENT LISTENER
         rightContainer.className = "grayOut"
