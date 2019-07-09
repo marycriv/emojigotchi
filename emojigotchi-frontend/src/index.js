@@ -7,6 +7,7 @@ const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 
+
 let currentUserId
 
 
@@ -160,7 +161,6 @@ function drag(e) {
 }
 
 function drop(e) {
-  console.log(e.target)
   e.preventDefault()
   let data = e.dataTransfer.getData("text")
   //e.target.appendChild(document.getElementById(data))
@@ -182,6 +182,7 @@ function drop(e) {
     level.innerText = json.level
     const food = document.querySelector("#drag1")
     food.innerText = getFood()
+    bouncePet()
   })
 }
 
@@ -194,4 +195,19 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+function bouncePet() {
+  innerContainer.innerHTML += `<h2>YAY FOOD!</h2>`
+  const thePet = document.querySelector("#the-pet")
+  thePet.className = "box bounce"
+  petContainer.className = "pet-container stage"
+  setTimeout(stopBounce, 6100);
+}
+
+function stopBounce() {
+  innerContainer.lastElementChild.remove()
+  const thePet = document.querySelector("#the-pet")
+  thePet.className = ""
+  petContainer.className = "pet-container" 
 }
