@@ -165,7 +165,7 @@ petContainer.addEventListener('submit', e => {
               `
               //Calls on gotchi game function with user & pet ids
               gotchiGame(currentUserId, petsJson)
-              decreaseLevel()
+
             }) // end petsJson
           }
         })// end name submit event listener
@@ -232,26 +232,36 @@ function stopBounce() {
   petContainer.className = "pet-container" 
 }
 
-function depreciateScore() {
-  const thePet = document.querySelector("#the-pet")
+let decreaseLevel = setInterval(function() {
+  
   const theLevel = document.querySelector("#level")
-  fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify({
-      level: parseInt(theLevel.innerText) - 1
+  if(parseInt(theLevel.innerText) > 0 ){
+    fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        level: parseInt(theLevel.innerText) - 1
+      })
     })
-  })
-  .then(resp => resp.json())
-  .then(json => {
-    thePet.dataset.level = json.level
-    theLevel.innerText = json.level
-  })
-}
-
-function decreaseLevel() {
-  setInterval(depreciateScore, 3000)
-}
+    .then(resp => resp.json())
+    .then(json => {
+      const thePet = document.querySelector("#the-pet")
+      
+      thePet.dataset.level = json.level
+      theLevel.innerText = json.level
+      return json.level
+    })
+    .then(level => {
+      if (level <= 0) {
+        const rightContainer = document.querySelector("#right-container")
+        clearInterval(decreaseLevel);
+        thePet.innerHTML = `<h2>🚑😵👻🔥</h2>
+        <h5>GAME OVER</h5>`
+        //NEED TO REMOVE EVENT LISTENER
+        rightContainer.className = "grayOut"
+    }})
+  }
+}, 3000)

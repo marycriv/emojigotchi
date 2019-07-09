@@ -128,3 +128,8 @@
   64%  { transform: scale(1,1)      translateY(0); }
   100% { transform: scale(1,1)      translateY(0); }
 }
+
+.grayOut {
+  opacity: 0.5;
+  filter: alpha(opacity=50); /* msie */
+}
