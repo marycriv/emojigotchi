@@ -233,8 +233,9 @@ function stopBounce() {
 }
 
 let decreaseLevel = setInterval(function() {
-  
+  const thePet = document.querySelector("#the-pet")
   const theLevel = document.querySelector("#level")
+  const rightContainer = document.querySelector("#right-container")
   if(parseInt(theLevel.innerText) > 0 ){
     fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
       method: "PATCH",
@@ -248,15 +249,12 @@ let decreaseLevel = setInterval(function() {
     })
     .then(resp => resp.json())
     .then(json => {
-      const thePet = document.querySelector("#the-pet")
-      
       thePet.dataset.level = json.level
       theLevel.innerText = json.level
       return json.level
     })
     .then(level => {
       if (level <= 0) {
-        const rightContainer = document.querySelector("#right-container")
         clearInterval(decreaseLevel);
         thePet.innerHTML = `<h2>🚑😵👻🔥</h2>
         <h5>GAME OVER</h5>`
