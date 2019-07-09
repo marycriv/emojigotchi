@@ -25,15 +25,31 @@ function loadLoginForm() {
       `
 }
 
-function nameYourGotchi() {
-  innerContainer.innerHTML =
-  `<form id='emoji-name-form'>
-      <label for='name'>New Pet's Name:</label><br>
-      <input name="name" id="name" value="bepis">
-  </form>
+function nameYourGotchi(userInfo) {
+  fetch("http://localhost:3000/pets")
+  .then(resp => resp.json())
+  .then(petsJson => {
+    innerContainer.innerHTML =
+    `<form id='emoji-name-form'>
+        <label for='name'>New Pet's Name:</label><br>
+        <input name="name" id="name" value="bepis">
+    </form>
 
-  <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
-`
+    <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
+
+    <br>
+    <div><h2>Username: ${userInfo.username}</h2></div>
+    <br>
+    <div><h3>Pets:</h3></div>
+
+    `
+    petsJson.forEach(function(element) {
+      if (element.user_id === userInfo.id) {
+        innerContainer.innerHTML += `<p>${element.name}</p>`;
+      }
+    });
+
+    })
 }
 
 // Creates the game
@@ -46,14 +62,14 @@ function gotchiGame(userId, currentPet) {
     <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</li>
 
 
-    
+
         <li id="pet-stat-2-food" class="pet-stats-item">
 
         <span draggable="true" ondragstart="drag(event)" id="drag1">
         ${getFood()}
         </span>
         </li>
-        
+
 
 
     <li id="level" class="pet-stats-item">${currentPet.level}</li>
@@ -119,7 +135,7 @@ petContainer.addEventListener('submit', e => {
         currentUserId = userJson.id
         userInfoContainer.innerHTML = `<div class="user-info-item">Name: ${userJson.username}</div>`
 
-        nameYourGotchi()
+        nameYourGotchi(userJson)
 
         petContainer.addEventListener('click', e => {
             e.preventDefault()
@@ -209,5 +225,5 @@ function stopBounce() {
   innerContainer.lastElementChild.remove()
   const thePet = document.querySelector("#the-pet")
   thePet.className = ""
-  petContainer.className = "pet-container" 
+  petContainer.className = "pet-container"
 }
