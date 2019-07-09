@@ -237,5 +237,5 @@ function depreciateScore() {
 }
 
 function decreaseLevel() {
-  setInterval(depreciateScore, 2000)
+  setInterval(depreciateScore, 3000)
 }
