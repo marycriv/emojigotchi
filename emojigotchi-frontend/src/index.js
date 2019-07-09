@@ -13,10 +13,10 @@ function loadLoginForm() {
         `
         <form id='login-form'>
             <label for='username'>Username:</label><br>
-            <input name="username" id="username">
+            <input name="username" id="username" value="a">
         </form>
 
-        <button type="submit" form="login-form" value="Submit">Submit</button>
+        <button class="nes-btn is-success" type="submit" form="login-form" value="Submit">Submit</button>
 
       `
 }
@@ -25,10 +25,10 @@ function nameYourGotchi() {
   innerContainer.innerHTML =
   `<form id='emoji-name-form'>
       <label for='name'>New Pet's Name:</label><br>
-      <input name="name" id="name">
+      <input name="name" id="name" value="bepis">
   </form>
 
-  <button form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
+  <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
 `
 }
 
