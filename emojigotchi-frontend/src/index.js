@@ -202,7 +202,7 @@ function bouncePet() {
   const thePet = document.querySelector("#the-pet")
   thePet.className = "box bounce"
   petContainer.className = "pet-container stage"
-  setTimeout(stopBounce, 6100);
+  setTimeout(stopBounce, 6010);
 }
 
 function stopBounce() {
