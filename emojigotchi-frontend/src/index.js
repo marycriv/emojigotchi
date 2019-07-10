@@ -174,16 +174,21 @@ petContainer.addEventListener('submit', e => {
               })
             .then(resp => resp.json())
             .then(petsJson => {
-              currentPetId = petsJson.id
+              if (petsJson.dead) {
+                wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
+              } 
+              else {
+                currentPetId = petsJson.id
 
-              wholeAppHeader.innerHTML += `
-              <b>Pet name:</b> ${petsJson.name} ▪️
-              <b>Pet id:</b> ${currentPetId}
-              <p hidden>${petsJson.dead}</p>
-              `
-              //Calls on gotchi game function with user & pet ids
-              gotchiGame(currentUserId, petsJson)
-
+                wholeAppHeader.innerHTML = `
+                <b>Username:</b> ${petsJson.user.username} ▪️
+                <b>Pet name:</b> ${petsJson.name} ▪️
+                <b>Pet id:</b> ${currentPetId}
+                <p hidden>${petsJson.dead}</p>
+                `
+                //Calls on gotchi game function with user & pet ids
+                gotchiGame(currentUserId, petsJson)
+              }
             }) // end petsJson
           }
         })// end name submit event listener
