@@ -47,15 +47,23 @@ function nameYourGotchi(userInfo) {
     </div>
     <br>
     <br>
-    <div><h3>Pets:</h3></div>
     `
+    innerContainer.innerHTML += `
+      <label for="success_select">Pet selector:</label>
+      <div class="nes-select is-success">
+        <select required id="success_select">
+          <option value="" disabled selected hidden>Select pet...</option>
+    `
+    let counter = 0
     petsJson.forEach(function(element) {
       if (element.user_id === userInfo.id) {
         if (element.dead === false){
-          innerContainer.innerHTML += `<p>${element.name}</p>`;
-        } else {
-          innerContainer.innerHTML += `<p class="grayOut">☠️ ${element.name}</p>`;
+          document.getElementById("success_select").innerHTML += `
+          <option pet-id="${element.id}" value="${counter}">${element.name}</option>`
+          counter += 1
         }
+          innerContainer.innerHTML += `
+          <p class="grayOut">☠️ ${element.name}</p>`;
       }
     });
 
@@ -87,7 +95,7 @@ function gotchiGame(userId, currentPet) {
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
-    rightContainer.addEventListener('click', likeMyPet) 
+    rightContainer.addEventListener('click', likeMyPet)
     innerContainer.addEventListener('click', likeMyPet)// love click event listener
     //gameStarted = true
   } else {
@@ -176,7 +184,7 @@ petContainer.addEventListener('submit', e => {
             .then(petsJson => {
               if (petsJson.dead) {
                 wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
-              } 
+              }
               else {
                 currentPetId = petsJson.id
 
