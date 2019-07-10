@@ -15,7 +15,9 @@ class PetsController < ApplicationController
     if !pet
       pet = Pet.create(pet_params)
     end
-    render json: pet
+    render json: pet.to_json(:include => {
+    :user => {:only => [:id, :username]}
+    }, :except => [:created_at, :updated_at])
   end
 
   def edit
@@ -25,7 +27,9 @@ class PetsController < ApplicationController
   def update
     pet = Pet.find(params[:id])
     pet.update(pet_params)
-    render json: pet
+    render json: pet.to_json(:include => {
+    :user => {:only => [:id, :username]}
+    }, :except => [:created_at, :updated_at])
   end
 
   def show
