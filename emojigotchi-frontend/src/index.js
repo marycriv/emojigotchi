@@ -7,8 +7,7 @@ const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 const wholeAppHeader = document.querySelector("#overall-app-header")
-const thePet = document.querySelector("#the-pet")
-const theLevel = document.querySelector("#level")
+
 
 
 let gameStarted = false
@@ -88,7 +87,6 @@ function nameYourGotchiScreen(userInfo) {
 
 // Creates the game
 function gotchiGame(userId, currentPet) {
-  if (currentPet.dead === false) {
     innerContainer.innerHTML = `
       <div class="noselect" id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
 
@@ -111,14 +109,6 @@ function gotchiGame(userId, currentPet) {
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
-    //gameStarted = true
-  } else {
-    clearInterval(decreaseLevel);
-    thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
-    <h5>GAME OVER</h5>`
-    //NEED TO REMOVE EVENT LISTENER
-    rightContainer.className = "grayOut"
-  }
 }
 
 function likeMyPet(e) {
@@ -244,6 +234,10 @@ function stopBounce() {
 
 let decreaseLevel = setInterval(function() {
 
+const thePet = document.querySelector("#the-pet")
+const theLevel = document.querySelector("#level")
+
+if (theLevel) {
   if(parseInt(theLevel.innerText) > 0 ){
     fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
       method: "PATCH",
@@ -276,11 +270,7 @@ let decreaseLevel = setInterval(function() {
         })
         .then(resp => resp.json())
         .then(petJson => {
-          clearInterval(decreaseLevel);
-          thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
-          <h5>GAME OVER</h5>`
-          //NEED TO REMOVE EVENT LISTENER
-          rightContainer.className = "grayOut"
+          gameOver(thePet);
 
         })
 
@@ -288,6 +278,7 @@ let decreaseLevel = setInterval(function() {
 
     }})
   }
+}
 }, 3000)
 
 function playRPS() {
@@ -360,11 +351,11 @@ function renderRPSResult(petChoice, userChoice) {
   document.querySelector("#play-msg").remove()
   const theWinner = rpsWinner(petChoice, userChoice)
   innerContainer.firstChild.innerHTML = `
-  <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
-  thePet.innerHTML = rpsResultEmoji[theWinner]
+      <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
+      thePet.innerHTML = rpsResultEmoji[theWinner]
   innerContainer.innerHTML += `<div id="rps-result">
-    <h3>Your pet picked ${petChoice.emoji}</h3>
-    <h2>You picked ${userChoice.emoji}</h2>
+      <h3>Your pet picked ${petChoice.emoji}</h3>
+      <h2>You picked ${userChoice.emoji}</h2>
     </div>`
 }
 
@@ -428,4 +419,12 @@ function gotchiNameSubmit(e) {
         gotchiGame(currentUserId, petsJson)
       }
     }) // end petsJson
+}
+
+function gameOver(pet) {
+  clearInterval(decreaseLevel);
+  pet.innerHTML = `<h3>🚑😵👻🔥</h3>
+  <h5>GAME OVER</h5>`
+  //NEED TO REMOVE EVENT LISTENER
+  rightContainer.className = "grayOut"
 }
