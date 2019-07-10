@@ -7,12 +7,26 @@ const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 const wholeAppHeader = document.querySelector("#overall-app-header")
+const thePet = document.querySelector("#the-pet")
+const theLevel = document.querySelector("#level")
+
 
 let gameStarted = false
 const playMsg = "Let's Play Rock Paper Scissor!"
 const rpsValues = [{value: 'r', emoji: '👊'},{value: 'p',emoji: '🖐'},{value: 's', emoji: '✌️'}]
 const rpsResultEmoji = {2: '🙃', 1: '😭', 0: '😆💪'}
 let currentUserId
+
+// Global event listener
+petContainer.addEventListener("click", e => {
+  if (e.target.id === "pet-play") {
+    playRPS();
+  } else if (e.target.id === "pet-stat-1-love" || e.target.id === "the-pet") {
+    likeMyPet(e);
+  } else if (e.target.id === "emoji-name-form-btn") {
+    gotchiNameSubmit(e)
+  }
+})
 
 function loadLoginForm() {
     innerContainer.innerHTML =
@@ -31,7 +45,7 @@ function loadLoginForm() {
       `
 }
 
-function nameYourGotchi(userInfo) {
+function nameYourGotchiScreen(userInfo) {
   fetch("http://localhost:3000/pets")
   .then(resp => resp.json())
   .then(petsJson => {
@@ -76,12 +90,12 @@ function nameYourGotchi(userInfo) {
 function gotchiGame(userId, currentPet) {
   if (currentPet.dead === false) {
     innerContainer.innerHTML = `
-      <div id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
+      <div class="noselect" id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
 
     `
     rightContainer.innerHTML = `
     <ul class="pet-stats-container">
-      <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</li>
+      <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item noselect">❤️</li>
 
 
 
@@ -97,8 +111,6 @@ function gotchiGame(userId, currentPet) {
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
-    rightContainer.addEventListener('click', likeMyPet)
-    innerContainer.addEventListener('click', likeMyPet)// love click event listener
     //gameStarted = true
   } else {
     clearInterval(decreaseLevel);
@@ -111,7 +123,7 @@ function gotchiGame(userId, currentPet) {
 
 function likeMyPet(e) {
   e.preventDefault()
-  if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
+  // if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
         method: "PATCH",
@@ -126,23 +138,23 @@ function likeMyPet(e) {
     .then(resp => resp.json())
     .then(petJson => {
       innerContainer.innerHTML = `
-        <div id="the-pet" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
+        <div id="the-pet" class="noselect" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
       `
       rightContainer.innerHTML = `
       <ul class="pet-stats-container">
-        <li id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item">❤️</li>
+        <li id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item noselect">❤️</li>
 
         <li id="pet-stat-2-food" class="pet-stats-item">
         <img src="https://images.emojiterra.com/google/android-pie/512px/1f32e.png" width="60px" style="background-color:transparent;" draggable="true" ondragstart="drag(event)" id="drag1">
         </li>
 
         <li id="level" class="pet-stats-item">${petJson.level}</li>
-        <li id="pet-play" class="pet-stats-item">🍆</li>
+        <li id="pet-play" class="pet-stats-item noselect">🍆</li>
         <li><p hidden>${petJson.dead}</p></li>
       </ul>
       `
     })
-  }
+  // }
 }
 
 loadLoginForm()
@@ -162,47 +174,13 @@ petContainer.addEventListener('submit', e => {
     .then(resp => resp.json())
     .then(userJson => {
         currentUserId = userJson.id
-        wholeAppHeader.innerHTML = `<b>Username:</b> ${userJson.username} ▪️`
+        wholeAppHeader.innerHTML = `<p hidden class="hiddenuserid">${userJson.id}</p>
+        <b>Username:</b> ${userJson.username} ▪️
 
-        nameYourGotchi(userJson)
+        `
 
-        petContainer.addEventListener('click', e => {
-            e.preventDefault()
-            if (e.target.id === "emoji-name-form-btn") {
-              const petName = {
-                "name": e.target.form.name.value,
-                "user_id": userJson.id
-              }
-              fetch("http://localhost:3000/pets", {
-                  method: "POST",
-                  headers: {
-                      "Content-Type": "application/json",
-                      "Accept": "application/json"
-                  },
-                  body: JSON.stringify(petName)
-              })
-            .then(resp => resp.json())
-            .then(petsJson => {
-              if (petsJson.dead) {
-                wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
-              }
-              else {
-                console.log(petsJson)
-                currentPetId = petsJson.id
-                console.log(petsJson.user)
-                wholeAppHeader.innerHTML = `
-                <b>Username:</b> ${petsJson.user.username} ▪️
-                <b>Pet name:</b> ${petsJson.name} ▪️
-                <b>Pet id:</b> ${currentPetId}
-                <p hidden>${petsJson.dead}</p>
-                `
-                //Calls on gotchi game function with user & pet ids
-                gotchiGame(currentUserId, petsJson)
-              }
-            }) // end petsJson
-          }
-        })// end name submit event listener
-    })
+        nameYourGotchiScreen(userJson)
+  })
 })
 
 function allowDrop(e) {
@@ -260,15 +238,12 @@ function bouncePet() {
 
 function stopBounce() {
   innerContainer.lastElementChild.remove()
-  const thePet = document.querySelector("#the-pet")
   thePet.className = ""
   petContainer.className = "pet-container"
 }
 
 let decreaseLevel = setInterval(function() {
-  const thePet = document.querySelector("#the-pet")
-  const theLevel = document.querySelector("#level")
-  const rightContainer = document.querySelector("#right-container")
+
   if(parseInt(theLevel.innerText) > 0 ){
     fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
       method: "PATCH",
@@ -350,7 +325,7 @@ function playRPS() {
       increaseLevelFromRPS()
       setTimeout(removeRPSResult, 3000)
     }
-    
+
   })
 }
 
@@ -400,7 +375,7 @@ function theWinnerMsg(result) {
   }
   else if (result === 0){
     return "The Pet Wins!"
-  } 
+  }
   else if (result === 1) {
     return "You Win!"
   }
@@ -419,8 +394,38 @@ function rpsWinner(petChoice, userChoice) {
   }
 }
 
-rightContainer.addEventListener("click", e => {
-  if(e.target.id === "pet-play") {
-    playRPS()
-  }
-})
+function gotchiNameSubmit(e) {
+    e.preventDefault()
+    let userIdFromHeader = wholeAppHeader.getElementsByClassName('hiddenuserid')[0].innerText
+    const petName = {
+      "name": e.target.form.name.value,
+      "user_id": userIdFromHeader
+    }
+    fetch("http://localhost:3000/pets", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+      body: JSON.stringify(petName)
+      })
+    .then(resp => resp.json())
+    .then(petsJson => {
+      if (petsJson.dead) {
+        wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
+      }
+      else {
+        console.log(petsJson)
+        currentPetId = petsJson.id
+        console.log(petsJson.user)
+        wholeAppHeader.innerHTML = `
+        <b>Username:</b> ${petsJson.user.username} ▪️
+        <b>Pet name:</b> ${petsJson.name} ▪️
+        <b>Pet id:</b> ${currentPetId}
+        <p hidden>${petsJson.dead}</p>
+        `
+        //Calls on gotchi game function with user & pet ids
+        gotchiGame(currentUserId, petsJson)
+      }
+    }) // end petsJson
+}
