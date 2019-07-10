@@ -87,7 +87,8 @@ function gotchiGame(userId, currentPet) {
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
-    rightContainer.addEventListener('click', likeMyPet) // love click event listener
+    rightContainer.addEventListener('click', likeMyPet) 
+    innerContainer.addEventListener('click', likeMyPet)// love click event listener
     //gameStarted = true
   } else {
     clearInterval(decreaseLevel);
@@ -100,6 +101,7 @@ function gotchiGame(userId, currentPet) {
 
 function likeMyPet(e) {
   e.preventDefault()
+  console.log(e.target.id)
   if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
@@ -127,7 +129,7 @@ function likeMyPet(e) {
 
         <li id="level" class="pet-stats-item">${petJson.level}</li>
         <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
-        <li><p hidden>${currentPet.dead}</p></li>
+        <li><p hidden>${petJson.dead}</p></li>
       </ul>
       `
     })
