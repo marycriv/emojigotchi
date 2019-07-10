@@ -12,8 +12,6 @@ let gameStarted = false
 
 let currentUserId
 
-
-
 function loadLoginForm() {
     innerContainer.innerHTML =
         `
@@ -53,7 +51,11 @@ function nameYourGotchi(userInfo) {
     `
     petsJson.forEach(function(element) {
       if (element.user_id === userInfo.id) {
-        innerContainer.innerHTML += `<p>${element.name}</p>`;
+        if (element.dead === false){
+          innerContainer.innerHTML += `<p>${element.name}</p>`;
+        } else {
+          innerContainer.innerHTML += `<p class="grayOut">☠️ ${element.name}</p>`;
+        }
       }
     });
 
@@ -62,33 +64,38 @@ function nameYourGotchi(userInfo) {
 
 // Creates the game
 function gotchiGame(userId, currentPet) {
+  if (currentPet.dead === false) {
+    innerContainer.innerHTML = `
+      <div id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
 
-  innerContainer.innerHTML = `
-    <div id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
-
-  `
-  rightContainer.innerHTML = `
-  <ul class="pet-stats-container">
-    <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</li>
-
-
-
-        <li id="pet-stat-2-food" class="pet-stats-item">
-
-        <span draggable="true" ondragstart="drag(event)" id="drag1">
-        ${getFood()}
-        </span>
-        </li>
+    `
+    rightContainer.innerHTML = `
+    <ul class="pet-stats-container">
+      <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</li>
 
 
 
-    <li id="level" class="pet-stats-item">${currentPet.level}</li>
-    <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
-  </ul>
-  `
-  rightContainer.addEventListener('click', likeMyPet) // love click event listener
-  //gameStarted = true
+          <li id="pet-stat-2-food" class="pet-stats-item">
 
+          <img src="https://images.emojiterra.com/google/android-pie/512px/1f32e.png" style="background-color:transparent;" width="60px" draggable="true" ondragstart="drag(event)" id="drag1">
+          </li>
+
+
+
+      <li id="level" class="pet-stats-item">${currentPet.level}</li>
+      <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+      <li><p hidden>${currentPet.dead}</p></li>
+    </ul>
+    `
+    rightContainer.addEventListener('click', likeMyPet) // love click event listener
+    //gameStarted = true
+  } else {
+    clearInterval(decreaseLevel);
+    thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
+    <h5>GAME OVER</h5>`
+    //NEED TO REMOVE EVENT LISTENER
+    rightContainer.className = "grayOut"
+  }
 }
 
 function likeMyPet(e) {
@@ -115,13 +122,12 @@ function likeMyPet(e) {
         <li id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item">❤️</li>
 
         <li id="pet-stat-2-food" class="pet-stats-item">
-        <span draggable="true" ondragstart="drag(event)" id="drag1">
-        ${getFood()}
-        </span>
+        <img src="https://images.emojiterra.com/google/android-pie/512px/1f32e.png" width="60px" style="background-color:transparent;" draggable="true" ondragstart="drag(event)" id="drag1">
         </li>
 
         <li id="level" class="pet-stats-item">${petJson.level}</li>
         <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+        <li><p hidden>${currentPet.dead}</p></li>
       </ul>
       `
     })
@@ -171,6 +177,7 @@ petContainer.addEventListener('submit', e => {
               wholeAppHeader.innerHTML += `
               <b>Pet name:</b> ${petsJson.name} ▪️
               <b>Pet id:</b> ${currentPetId}
+              <p hidden>${petsJson.dead}</p>
               `
               //Calls on gotchi game function with user & pet ids
               gotchiGame(currentUserId, petsJson)
@@ -264,11 +271,29 @@ let decreaseLevel = setInterval(function() {
     })
     .then(level => {
       if (level <= 0) {
-        clearInterval(decreaseLevel);
-        thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
-        <h5>GAME OVER</h5>`
-        //NEED TO REMOVE EVENT LISTENER
-        rightContainer.className = "grayOut"
+        ///
+        fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            dead: true
+          })
+        })
+        .then(resp => resp.json())
+        .then(petJson => {
+          clearInterval(decreaseLevel);
+          thePet.innerHTML = `<h3>🚑😵👻🔥</h3>
+          <h5>GAME OVER</h5>`
+          //NEED TO REMOVE EVENT LISTENER
+          rightContainer.className = "grayOut"
+
+        })
+
+        ///
+
     }})
   }
 }, 3000)

@@ -39,8 +39,8 @@ class PetsController < ApplicationController
 
   def pet_params
     # need to set defaults
-    defaults = { level: 10 }
-    params.require(:pet).permit(:user_id, :name, :level).reverse_merge(defaults)
+    defaults = { level: 10, dead: false }
+    params.require(:pet).permit(:user_id, :name, :level, :dead).reverse_merge(defaults)
   end
 
 end
