@@ -9,7 +9,9 @@ const petFood = document.querySelector("#pet-stat-2-food")
 const wholeAppHeader = document.querySelector("#overall-app-header")
 
 let gameStarted = false
-
+const playMsg = "Let's Play Rock Paper Scissor!"
+const rpsValues = [{value: 'r', emoji: '👊'},{value: 'p',emoji: '🖐'},{value: 's', emoji: '✌️'}]
+const rpsResultEmoji = {2: '🙃', 1: '😭', 0: '😆💪'}
 let currentUserId
 
 function loadLoginForm() {
@@ -91,7 +93,7 @@ function gotchiGame(userId, currentPet) {
 
 
       <li id="level" class="pet-stats-item">${currentPet.level}</li>
-      <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+      <li id="pet-play" class="pet-stats-item">🍆</li>
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
@@ -109,7 +111,6 @@ function gotchiGame(userId, currentPet) {
 
 function likeMyPet(e) {
   e.preventDefault()
-  console.log(e.target.id)
   if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
@@ -136,7 +137,7 @@ function likeMyPet(e) {
         </li>
 
         <li id="level" class="pet-stats-item">${petJson.level}</li>
-        <li id="pet-stat-4-bepis" class="pet-stats-item">🍆</li>
+        <li id="pet-play" class="pet-stats-item">🍆</li>
         <li><p hidden>${petJson.dead}</p></li>
       </ul>
       `
@@ -186,8 +187,9 @@ petContainer.addEventListener('submit', e => {
                 wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
               }
               else {
+                console.log(petsJson)
                 currentPetId = petsJson.id
-
+                console.log(petsJson.user)
                 wholeAppHeader.innerHTML = `
                 <b>Username:</b> ${petsJson.user.username} ▪️
                 <b>Pet name:</b> ${petsJson.name} ▪️
@@ -312,3 +314,113 @@ let decreaseLevel = setInterval(function() {
     }})
   }
 }, 3000)
+
+function playRPS() {
+
+  const playMsgElement = document.createElement("h5")
+  let userChoice
+  let petChoice = rpsValues[getRandomInt(0,3)]
+  playMsgElement.innerText = playMsg
+  innerContainer.insertBefore(playMsgElement, innerContainer.firstChild)
+  const thePet = document.querySelector("#the-pet")
+  thePet.innerText = '🤔💭'
+  innerContainer.innerHTML += `<div id="play-msg"><p>is thinking...</p>
+  <h5>What do you choose?</h5>
+  <p>Press R for 👊</p><p>Press P for 🖐</p><p>Press S for ✌️</p></div>`
+
+  document.addEventListener('keydown', e => {
+    if(e.keyCode == 114 || e.keyCode == 82){
+      alert("👊 You Picked ROCK 👊")
+      userChoice = rpsValues[0]
+      renderRPSResult( petChoice, userChoice)
+      increaseLevelFromRPS()
+      setTimeout(removeRPSResult, 3000)
+    }
+    else if (e.keyCode == 59 || e.keyCode == 80){
+      alert("🖐 You Picked PAPER 🖐")
+      userChoice = rpsValues[1]
+      renderRPSResult( petChoice, userChoice)
+      increaseLevelFromRPS()
+      setTimeout(removeRPSResult, 3000)
+    }
+    else if (e.keyCode == 115 || e.keyCode == 83){
+      alert("✌️ You picked SCISSOR ✌️")
+      userChoice = rpsValues[2]
+      renderRPSResult(petChoice, userChoice)
+      increaseLevelFromRPS()
+      setTimeout(removeRPSResult, 3000)
+    }
+    
+  })
+}
+
+function increaseLevelFromRPS() {
+  const thePet = document.querySelector("#the-pet")
+  const level = document.querySelector("#level")
+  fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      level: parseInt(thePet.dataset.level) + 20
+    })
+  })
+  .then(resp => resp.json())
+  .then(petJson => {
+    level.innerText = petJson.level
+    thePet.dataset.level = petJson.level
+  })
+}
+
+function removeRPSResult() {
+  document.querySelector("#rps-msg").remove()
+  document.querySelector("#rps-result").remove()
+  document.querySelector("#the-pet").innerText = '😀'
+}
+
+function renderRPSResult(petChoice, userChoice) {
+  const thePet = document.querySelector("#the-pet")
+  document.querySelector("#play-msg").remove()
+  const theWinner = rpsWinner(petChoice, userChoice)
+  innerContainer.firstChild.innerHTML = `
+  <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
+  thePet.innerHTML = rpsResultEmoji[theWinner]
+  innerContainer.innerHTML += `<div id="rps-result">
+    <h3>Your pet picked ${petChoice.emoji}</h3>
+    <h2>You picked ${userChoice.emoji}</h2>
+    </div>`
+}
+
+
+function theWinnerMsg(result) {
+  if (result === 2) {
+    return "It's a Tie."
+  }
+  else if (result === 0){
+    return "The Pet Wins!"
+  } 
+  else if (result === 1) {
+    return "You Win!"
+  }
+}
+
+function rpsWinner(petChoice, userChoice) {
+  //return 0 if pet wins, 1 if user wins, 2 if tie
+  if(petChoice.value === userChoice.value){
+    return 2
+  }
+  else if ((petChoice.value === 'r' && userChoice.value === 's') || (petChoice.value === 's' && userChoice.value === 'p') || (petChoice.value === 'p' && userChoice.value === 'r')){
+    return 0
+  }
+  else {
+    return 1
+  }
+}
+
+rightContainer.addEventListener("click", e => {
+  if(e.target.id === "pet-play") {
+    playRPS()
+  }
+})
