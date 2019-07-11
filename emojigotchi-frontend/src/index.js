@@ -82,7 +82,7 @@ function newUserOrLogIn(e) {
         nameYourGotchiScreen(userJson)
       })
     } else {
-      alert('no')
+      alert('Username must be between 2 and 20 characters.')
     }
 }
 
@@ -199,7 +199,7 @@ function gotchiGame(userId, currentPet) {
     // background()
     rightContainer.innerHTML = `
     <ul class="pet-stats-container">
-      <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item noselect">❤️</li>
+      <li><i id="pet-stat-1-love" data-id=${currentPet.id} class="nes-icon is-large heart"></i></li>
 
 
 
@@ -238,7 +238,7 @@ function likeMyPet(e) {
       `
       rightContainer.innerHTML = `
       <ul class="pet-stats-container">
-        <li id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item noselect">❤️</li>
+        <li><i id="pet-stat-1-love" data-id=${petJson.id} class="nes-icon is-large heart"></i></li>
 
         <li id="pet-stat-2-food" class="pet-stats-item">
         <img src="https://images.emojiterra.com/google/android-pie/512px/1f32e.png" width="60px" style="background-color:transparent;" draggable="true" ondragstart="drag(event)" id="drag1">
@@ -509,7 +509,7 @@ function gotchiNameSubmit(e) {
       }
     }) // end petsJson
   } else {
-    alert('no')
+    alert('Name must be between 2 and 20 characters.')
   }
 }
 
@@ -518,8 +518,9 @@ function gameOver(pet) {
   pet.innerHTML = `<h3>🚑😵👻🔥</h3>
   <h5>GAME OVER</h5>`
   //NEED TO REMOVE EVENT LISTENER
+  // where i stopped before lecture
   rightContainer.className = "grayOut"
-}
+  }
 
 // function background() {
 //   innerContainer.innerHTML += `<div class="grass"></div>`
