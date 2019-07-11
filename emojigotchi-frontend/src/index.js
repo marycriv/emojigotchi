@@ -275,14 +275,14 @@ function drop(e) {
           "Accept": "application/json"
       },
       body: JSON.stringify({
-          "level": parseInt(level.innerText) + 3
+          "level": parseInt(level.innerText) + 5
       })
   })
   .then(resp => resp.json())
   .then(json => {
     level.innerText = json.level
-    const food = document.querySelector("#drag1")
-    food.innerText = getFood()
+    //const food = document.querySelector("#drag1")
+    //food.innerText = getFood()
     bouncePet()
   })
 }
@@ -303,10 +303,11 @@ function bouncePet() {
   const thePet = document.querySelector("#the-pet")
   thePet.className = "box bounce"
   petContainer.className = "pet-container stage"
-  setTimeout(stopBounce(thePet), 2010);
+  setTimeout(stopBounce, 2010);
 }
 
-function stopBounce(thePet) {
+function stopBounce() {
+  const thePet = document.querySelector("#the-pet")
   innerContainer.lastElementChild.remove()
   thePet.className = ""
   petContainer.className = "pet-container"
@@ -364,8 +365,6 @@ if (theLevel) {
 function playRPS() {
 
   const playMsgElement = document.createElement("h5")
-  let userChoice
-  let petChoice = rpsValues[getRandomInt(0,3)]
   playMsgElement.innerText = playMsg
   innerContainer.insertBefore(playMsgElement, innerContainer.firstChild)
   const thePet = document.querySelector("#the-pet")
@@ -375,9 +374,11 @@ function playRPS() {
   <p>Press R for 👊</p><p>Press P for 🖐</p><p>Press S for ✌️</p></div>`
 
   document.addEventListener('keydown', playRoshambo);
-  playRoshambo(e)
+}
 
 function playRoshambo(e) {
+  let userChoice
+  let petChoice = rpsValues[getRandomInt(0,3)]
   if(e.keyCode == 114 || e.keyCode == 82){
     alert("👊 You Picked ROCK 👊")
     userChoice = rpsValues[0]
@@ -402,7 +403,6 @@ function playRoshambo(e) {
     setTimeout(removeRPSResult, 3000)
     document.removeEventListener("keydown", playRoshambo)
   }
-}
 }
 
 function increaseLevelFromRPS() {
@@ -432,18 +432,19 @@ function removeRPSResult() {
 }
 
 function renderRPSResult(petChoice, userChoice) {
-  const thePet = document.querySelector("#the-pet")
+  
   document.querySelector("#play-msg").remove()
   const theWinner = rpsWinner(petChoice, userChoice)
     innerContainer.innerHTML += `<div id="rps-result">
       <h2>You picked ${userChoice.emoji}</h2>
       <h2>Your pet picked ${petChoice.emoji}</h2>
       </div>`
+  const thePet = document.querySelector("#the-pet")
+  thePet.innerHTML = rpsResultEmoji[theWinner]
 
-    thePet.innerHTML = rpsResultEmoji[theWinner]
-
-    innerContainer.firstChild.innerHTML = `
+  innerContainer.firstChild.innerHTML = `
     <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
+
 }
 
 
@@ -452,7 +453,7 @@ function theWinnerMsg(result) {
     return "It's a Tie."
   }
   else if (result === 0){
-    return "The Pet Wins!"
+    return "Your Pet Wins!"
   }
   else if (result === 1) {
     return "You Win!"
