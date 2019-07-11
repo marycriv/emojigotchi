@@ -211,6 +211,7 @@ function gotchiGame(userId, currentPet) {
 }
 
 function removePulsateHeart() {
+  document.querySelector("#love-msg").remove()
   document.querySelector("#the-pet").className = "noselect"
   document.querySelector("#pet-stat-1-love").className = "pet-stats-item"
 }
@@ -226,7 +227,7 @@ function likeMyPet(e) {
             "Accept": "application/json"
         },
         body: JSON.stringify({
-            "level": currentLevel + 1
+            "level": currentLevel + 5
         })
     })
     .then(resp => resp.json())
@@ -234,6 +235,7 @@ function likeMyPet(e) {
       
       innerContainer.innerHTML = `
         <div id="the-pet" class="noselect animated wobble" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
+        <h2 id="love-msg"> I Love You Too! +3 </h2>
       `
       rightContainer.innerHTML = `
       <ul class="pet-stats-container">
@@ -300,7 +302,7 @@ function getRandomInt(min, max) {
 }
 
 function bouncePet() {
-  innerContainer.innerHTML += `<h2>YAY FOOD! +3 </h2>`
+  innerContainer.innerHTML += `<h2>YAY FOOD! +5 </h2>`
   const thePet = document.querySelector("#the-pet")
   thePet.className = "box bounce"
   petContainer.className = "pet-container stage"
@@ -384,7 +386,7 @@ function playRoshambo(e) {
     alert("👊 You Picked ROCK 👊")
     userChoice = rpsValues[0]
     renderRPSResult( petChoice, userChoice)
-    increaseLevelFromRPS()
+    increaseLevelFromRPS(rpsWinner(petChoice, userChoice))
     setTimeout(removeRPSResult, 3000)
     document.removeEventListener("keydown", playRoshambo)
   }
@@ -392,7 +394,7 @@ function playRoshambo(e) {
     alert("🖐 You Picked PAPER 🖐")
     userChoice = rpsValues[1]
     renderRPSResult( petChoice, userChoice)
-    increaseLevelFromRPS()
+    increaseLevelFromRPS(rpsWinner(petChoice, userChoice))
     setTimeout(removeRPSResult, 3000)
     document.removeEventListener("keydown", playRoshambo)
   }
@@ -400,15 +402,27 @@ function playRoshambo(e) {
     alert("✌️ You picked SCISSORS ✌️")
     userChoice = rpsValues[2]
     renderRPSResult(petChoice, userChoice)
-    increaseLevelFromRPS()
+    increaseLevelFromRPS(rpsWinner(petChoice, userChoice))
     setTimeout(removeRPSResult, 3000)
     document.removeEventListener("keydown", playRoshambo)
   }
 }
 
-function increaseLevelFromRPS() {
+function addLevels(result) {
+  if (result === 0){
+    return 50
+  }
+  else if(result === 1){
+    return 20
+  }
+  else {
+    return 30
+  }
+}
+function increaseLevelFromRPS(result) {
   const thePet = document.querySelector("#the-pet")
   const level = document.querySelector("#level")
+  const addedLevels = addLevels(result)
   fetch(`http://localhost:3000/pets/${thePet.dataset.id}`, {
     method: "PATCH",
     headers: {
@@ -416,7 +430,7 @@ function increaseLevelFromRPS() {
       "Accept": "application/json"
     },
     body: JSON.stringify({
-      level: parseInt(thePet.dataset.level) + 20
+      level: parseInt(thePet.dataset.level) + addedLevels
     })
   })
   .then(resp => resp.json())
@@ -451,13 +465,13 @@ function renderRPSResult(petChoice, userChoice) {
 
 function theWinnerMsg(result) {
   if (result === 2) {
-    return "It's a Tie."
+    return "It's a Tie. +30"
   }
   else if (result === 0){
-    return "Your Pet Wins!"
+    return "Your Pet Wins! +50"
   }
   else if (result === 1) {
-    return "You Win!"
+    return "You Win! +20"
   }
 }
 
