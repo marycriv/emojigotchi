@@ -51,6 +51,7 @@ function loadLoginForm() {
 }
 
 loadLoginForm()
+
 petContainer.addEventListener('submit', e => {
   newUserOrLogIn(e)
 })
@@ -60,24 +61,29 @@ function newUserOrLogIn(e) {
   const username = {
       "username": e.target.username.value
   }
-  fetch("http://localhost:3000/users", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-      },
-      body: JSON.stringify(username)
-  })
-  .then(resp => resp.json())
-  .then(userJson => {
-      currentUserId = userJson.id
-      wholeAppHeader.innerHTML = `<p hidden class="hiddenuserid">${userJson.id}</p>
-      <b>Username:</b> ${userJson.username} ▪️
 
-      `
+  if (e.target.username.value.length >= 2 && e.target.username.value.length <= 20) {
+    fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(username)
+    })
+    .then(resp => resp.json())
+    .then(userJson => {
+        currentUserId = userJson.id
+        wholeAppHeader.innerHTML = `<p hidden class="hiddenuserid">${userJson.id}</p>
+        <b>Username:</b> ${userJson.username} ▪️
 
-      nameYourGotchiScreen(userJson)
-})
+        `
+      // add error catch
+        nameYourGotchiScreen(userJson)
+      })
+    } else {
+      alert('no')
+    }
 }
 
 function nameYourGotchiScreen(userInfo) {
@@ -472,6 +478,8 @@ function gotchiNameSubmit(e) {
       "name": e.target.form.name.value,
       "user_id": userIdFromHeader
     }
+
+    if (e.target.form.name.value.length >= 2 && e.target.form.name.value.length <= 20) {
     fetch("http://localhost:3000/pets", {
       method: "POST",
       headers: {
@@ -499,6 +507,9 @@ function gotchiNameSubmit(e) {
         gotchiGame(currentUserId, petsJson)
       }
     }) // end petsJson
+  } else {
+    alert('no')
+  }
 }
 
 function gameOver(pet) {
