@@ -7,11 +7,11 @@ const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 const wholeAppHeader = document.querySelector("#overall-app-header")
-
+const nameDropdownSelectButton = document.querySelector("#selector-btn")
 
 
 let gameStarted = false
-const playMsg = "Let's Play Rock Paper Scissor!"
+const playMsg = "Let's Play Roshambo!"
 const rpsValues = [{value: 'r', emoji: '👊'},{value: 'p',emoji: '🖐'},{value: 's', emoji: '✌️'}]
 const rpsResultEmoji = {2: '🙃', 1: '😭', 0: '😆💪'}
 let currentUserId
@@ -24,6 +24,8 @@ petContainer.addEventListener("click", e => {
     likeMyPet(e);
   } else if (e.target.id === "emoji-name-form-btn") {
     gotchiNameSubmit(e)
+  } else if (e.target.id === "selector-btn") {
+    nameSelectedFromDropdown(e)
   }
 })
 
@@ -42,6 +44,36 @@ function loadLoginForm() {
 
 
       `
+}
+
+loadLoginForm()
+petContainer.addEventListener('submit', e => {
+  newUserOrLogIn(e)
+})
+
+function newUserOrLogIn(e) {
+  e.preventDefault()
+  const username = {
+      "username": e.target.username.value
+  }
+  fetch("http://localhost:3000/users", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+      },
+      body: JSON.stringify(username)
+  })
+  .then(resp => resp.json())
+  .then(userJson => {
+      currentUserId = userJson.id
+      wholeAppHeader.innerHTML = `<p hidden class="hiddenuserid">${userJson.id}</p>
+      <b>Username:</b> ${userJson.username} ▪️
+
+      `
+
+      nameYourGotchiScreen(userJson)
+})
 }
 
 function nameYourGotchiScreen(userInfo) {
@@ -69,20 +101,53 @@ function nameYourGotchiScreen(userInfo) {
         <select required id="success_select">
           <option value="" disabled selected hidden>Select pet...</option>
     `
+    innerContainer.innerHTML += `
+      <br>
+      <button id="selector-btn" type="button" class="nes-btn is-success">Select prev pet</button>
+    `
     let counter = 0
     petsJson.forEach(function(element) {
       if (element.user_id === userInfo.id) {
         if (element.dead === false){
           document.getElementById("success_select").innerHTML += `
-          <option pet-id="${element.id}" value="${counter}">${element.name}</option>`
+          <option id="${element.id}" value="${counter}">${element.name}</option>
+          `
           counter += 1
-        }
+
+        } else {
           innerContainer.innerHTML += `
           <p class="grayOut">☠️ ${element.name}</p>`;
+        }
       }
     });
 
     })
+}
+
+function nameSelectedFromDropdown(e) {
+  let selection = document.querySelector('#success_select').options[document.querySelector('#success_select').selectedIndex]
+  fetch(`http://localhost:3000/pets/${selection.id}`)
+    .then(resp => resp.json())
+    .then(petsJson => {
+      if (petsJson.dead) {
+        wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
+      }
+      else {
+        selection.id = petsJson.id
+        wholeAppHeader.innerHTML = `
+        <b>Username:</b> ${petsJson.user.username} ▪️
+        <b>Pet name:</b> ${petsJson.name} ▪️
+        <b>Pet id:</b> ${selection.id}
+        <p hidden>${petsJson.dead}</p>
+        `
+        //Calls on gotchi game function with user & pet ids
+        gotchiGame(currentUserId, petsJson)
+      }
+    }) // end petsJson
+
+
+
+
 }
 
 // Creates the game
@@ -105,7 +170,7 @@ function gotchiGame(userId, currentPet) {
 
 
       <li id="level" class="pet-stats-item">${currentPet.level}</li>
-      <li id="pet-play" class="pet-stats-item">🍆</li>
+      <li id="pet-play" class="pet-stats-item">⚔️</li>
       <li><p hidden>${currentPet.dead}</p></li>
     </ul>
     `
@@ -139,39 +204,13 @@ function likeMyPet(e) {
         </li>
 
         <li id="level" class="pet-stats-item">${petJson.level}</li>
-        <li id="pet-play" class="pet-stats-item noselect">🍆</li>
+        <li id="pet-play" class="pet-stats-item noselect">⚔️</li>
         <li><p hidden>${petJson.dead}</p></li>
       </ul>
       `
     })
   // }
 }
-
-loadLoginForm()
-petContainer.addEventListener('submit', e => {
-    e.preventDefault()
-    const username = {
-        "username": e.target.username.value
-    }
-    fetch("http://localhost:3000/users", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        body: JSON.stringify(username)
-    })
-    .then(resp => resp.json())
-    .then(userJson => {
-        currentUserId = userJson.id
-        wholeAppHeader.innerHTML = `<p hidden class="hiddenuserid">${userJson.id}</p>
-        <b>Username:</b> ${userJson.username} ▪️
-
-        `
-
-        nameYourGotchiScreen(userJson)
-  })
-})
 
 function allowDrop(e) {
   e.preventDefault()
@@ -223,10 +262,10 @@ function bouncePet() {
   const thePet = document.querySelector("#the-pet")
   thePet.className = "box bounce"
   petContainer.className = "pet-container stage"
-  setTimeout(stopBounce, 2010);
+  setTimeout(stopBounce(thePet), 2010);
 }
 
-function stopBounce() {
+function stopBounce(thePet) {
   innerContainer.lastElementChild.remove()
   thePet.className = ""
   petContainer.className = "pet-container"
@@ -310,7 +349,7 @@ function playRPS() {
       setTimeout(removeRPSResult, 3000)
     }
     else if (e.keyCode == 115 || e.keyCode == 83){
-      alert("✌️ You picked SCISSOR ✌️")
+      alert("✌️ You picked SCISSORS ✌️")
       userChoice = rpsValues[2]
       renderRPSResult(petChoice, userChoice)
       increaseLevelFromRPS()
@@ -350,13 +389,15 @@ function renderRPSResult(petChoice, userChoice) {
   const thePet = document.querySelector("#the-pet")
   document.querySelector("#play-msg").remove()
   const theWinner = rpsWinner(petChoice, userChoice)
-  innerContainer.firstChild.innerHTML = `
-      <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
-      thePet.innerHTML = rpsResultEmoji[theWinner]
-  innerContainer.innerHTML += `<div id="rps-result">
-      <h3>Your pet picked ${petChoice.emoji}</h3>
+    innerContainer.innerHTML += `<div id="rps-result">
       <h2>You picked ${userChoice.emoji}</h2>
-    </div>`
+      <h2>Your pet picked ${petChoice.emoji}</h2>
+      </div>`
+
+    thePet.innerHTML = rpsResultEmoji[theWinner]
+
+    innerContainer.firstChild.innerHTML = `
+    <h1 id="rps-msg">${theWinnerMsg(theWinner)}</h1>`
 }
 
 
