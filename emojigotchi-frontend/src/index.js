@@ -8,9 +8,9 @@ const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
 const wholeAppHeader = document.querySelector("#overall-app-header")
 const nameDropdownSelectButton = document.querySelector("#selector-btn")
+let usersDeadPets = []
 
-
-let gameStarted = false
+// let gameStarted = false
 const playMsg = "Let's Play Roshambo!"
 const rpsValues = [{value: 'r', emoji: '👊'},{value: 'p',emoji: '🖐'},{value: 's', emoji: '✌️'}]
 const rpsResultEmoji = {2: '🙃', 1: '😭', 0: '😆💪'}
@@ -19,6 +19,7 @@ let currentUserId
 // Global event listener
 petContainer.addEventListener("click", e => {
   if (e.target.id === "pet-play") {
+    // gameStarted = true
     playRPS();
   } else if (e.target.id === "pet-stat-1-love" || e.target.id === "the-pet") {
     likeMyPet(e);
@@ -26,8 +27,11 @@ petContainer.addEventListener("click", e => {
     gotchiNameSubmit(e)
   } else if (e.target.id === "selector-btn") {
     nameSelectedFromDropdown(e)
+  } else if (e.target.id === "graveyard") {
+    showDeadPets(e)
   }
 })
+
 
 function loadLoginForm() {
     innerContainer.innerHTML =
@@ -35,7 +39,7 @@ function loadLoginForm() {
         <div class="nes-field is-inline">
         <form style="margin:auto;margin-top:25%;" id='login-form'>
             <label for='username'>Username:</label><br>
-            <input name="username" id="username" value="a" class="nes-input is-success">
+            <input name="username" id="username" placeholder="What is your name?" class="nes-input is-success">
             <br>
             <button class="nes-btn is-success" type="submit" form="login-form" value="Submit">Submit</button>
             </form>
@@ -82,12 +86,10 @@ function nameYourGotchiScreen(userInfo) {
   .then(petsJson => {
     innerContainer.innerHTML =
       `
-      <div><h2>Username: ${userInfo.username}</h2></div>
-
       <div class="nes-field is-inline">
         <form id='emoji-name-form' style="margin:auto;margin-top:10%;">
             <label  for='name'>New Pet's Name:</label><br>
-            <input name="name" id="name" value="bepis" class="nes-input is-success">
+            <input name="name" id="name" placeholder="Name your pet!" class="nes-input is-success">
             <br>
             <button class="nes-btn is-success" form="emoji-name-form" id="emoji-name-form-btn">Submit</button>
         </form>
@@ -96,7 +98,7 @@ function nameYourGotchiScreen(userInfo) {
     <br>
     `
     innerContainer.innerHTML += `
-      <label for="success_select">Pet selector:</label>
+      <label for="success_select">Or select a previous pet:</label>
       <div class="nes-select is-success">
         <select required id="success_select">
           <option value="" disabled selected hidden>Select pet...</option>
@@ -105,6 +107,8 @@ function nameYourGotchiScreen(userInfo) {
       <br>
       <button id="selector-btn" type="button" class="nes-btn is-success">Select prev pet</button>
     `
+    petCemetery(petsJson, userInfo)
+
     let counter = 0
     petsJson.forEach(function(element) {
       if (element.user_id === userInfo.id) {
@@ -114,14 +118,44 @@ function nameYourGotchiScreen(userInfo) {
           `
           counter += 1
 
-        } else {
-          innerContainer.innerHTML += `
-          <p class="grayOut">☠️ ${element.name}</p>`;
         }
       }
     });
 
     })
+}
+
+function petCemetery(petsJson, userInfo) {
+
+  let deadPetExist = 0;
+  petsJson.forEach(function(element){
+    if (element.user_id === userInfo.id) {
+      if (element.dead === true){
+        usersDeadPets.push(element.name)
+        deadPetExist = 1
+        return deadPetExist
+      }
+    }
+  })
+  if (deadPetExist === 1) {
+    innerContainer.innerHTML += `
+    <br><br>
+    <button id="graveyard" class="nes-btn is-error">Pet cemetery ⚰️</button>
+    `
+  } else if (deadPetExist === 0) {
+    innerContainer.innerHTML += `
+    <br><br>
+    <button class="nes-btn is-disabled">Pet cemetery ⚰️</button>
+    `
+  }
+}
+
+function showDeadPets(e) {
+  innerContainer.innerHTML = ``
+  usersDeadPets.forEach(function(element) {
+        innerContainer.innerHTML += `
+        <p class="grayOut">☠️ ${element}</p>`;
+  });
 }
 
 function nameSelectedFromDropdown(e) {
@@ -333,30 +367,35 @@ function playRPS() {
   <h5>What do you choose?</h5>
   <p>Press R for 👊</p><p>Press P for 🖐</p><p>Press S for ✌️</p></div>`
 
-  document.addEventListener('keydown', e => {
-    if(e.keyCode == 114 || e.keyCode == 82){
-      alert("👊 You Picked ROCK 👊")
-      userChoice = rpsValues[0]
-      renderRPSResult( petChoice, userChoice)
-      increaseLevelFromRPS()
-      setTimeout(removeRPSResult, 3000)
-    }
-    else if (e.keyCode == 59 || e.keyCode == 80){
-      alert("🖐 You Picked PAPER 🖐")
-      userChoice = rpsValues[1]
-      renderRPSResult( petChoice, userChoice)
-      increaseLevelFromRPS()
-      setTimeout(removeRPSResult, 3000)
-    }
-    else if (e.keyCode == 115 || e.keyCode == 83){
-      alert("✌️ You picked SCISSORS ✌️")
-      userChoice = rpsValues[2]
-      renderRPSResult(petChoice, userChoice)
-      increaseLevelFromRPS()
-      setTimeout(removeRPSResult, 3000)
-    }
+  document.addEventListener('keydown', playRoshambo);
+  playRoshambo(e)
 
-  })
+function playRoshambo(e) {
+  if(e.keyCode == 114 || e.keyCode == 82){
+    alert("👊 You Picked ROCK 👊")
+    userChoice = rpsValues[0]
+    renderRPSResult( petChoice, userChoice)
+    increaseLevelFromRPS()
+    setTimeout(removeRPSResult, 3000)
+    document.removeEventListener("keydown", playRoshambo)
+  }
+  else if (e.keyCode == 59 || e.keyCode == 80){
+    alert("🖐 You Picked PAPER 🖐")
+    userChoice = rpsValues[1]
+    renderRPSResult( petChoice, userChoice)
+    increaseLevelFromRPS()
+    setTimeout(removeRPSResult, 3000)
+    document.removeEventListener("keydown", playRoshambo)
+  }
+  else if (e.keyCode == 115 || e.keyCode == 83){
+    alert("✌️ You picked SCISSORS ✌️")
+    userChoice = rpsValues[2]
+    renderRPSResult(petChoice, userChoice)
+    increaseLevelFromRPS()
+    setTimeout(removeRPSResult, 3000)
+    document.removeEventListener("keydown", playRoshambo)
+  }
+}
 }
 
 function increaseLevelFromRPS() {
