@@ -2,7 +2,7 @@ const petContainer = document.querySelector(".pet-container")
 const welcomeMsg = document.querySelector("h2")
 const petNameHeader = document.querySelector("h3")
 const innerContainer = document.querySelector("#inner-container")
-const loveBar = document.querySelector("#pet-stat-1-love")
+
 const rightContainer = document.querySelector("#right-container")
 const userInfoContainer = document.querySelector(".user-info-container")
 const petFood = document.querySelector("#pet-stat-2-food")
@@ -192,7 +192,7 @@ function gotchiGame(userId, currentPet) {
     // background()
     rightContainer.innerHTML = `
     <ul class="pet-stats-container">
-      <li><i id="pet-stat-1-love" data-id=${currentPet.id} class="nes-icon is-large heart"></i></li>
+      <li><div id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item">❤️</div></li>
 
 
 
@@ -210,9 +210,14 @@ function gotchiGame(userId, currentPet) {
     `
 }
 
+function removePulsateHeart() {
+  document.querySelector("#the-pet").className = "noselect"
+  document.querySelector("#pet-stat-1-love").className = "pet-stats-item"
+}
 function likeMyPet(e) {
   e.preventDefault()
   // if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
+    
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
         method: "PATCH",
@@ -226,12 +231,13 @@ function likeMyPet(e) {
     })
     .then(resp => resp.json())
     .then(petJson => {
+      
       innerContainer.innerHTML = `
-        <div id="the-pet" class="noselect" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
+        <div id="the-pet" class="noselect animated wobble" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
       `
       rightContainer.innerHTML = `
       <ul class="pet-stats-container">
-        <li><i id="pet-stat-1-love" data-id=${petJson.id} class="nes-icon is-large heart"></i></li>
+        <li><div id="pet-stat-1-love" data-id=${petJson.id} class="pet-stats-item animated pulse">❤️</div></li>
 
         <li id="pet-stat-2-food" class="pet-stats-item">
         <img src="https://images.emojiterra.com/google/android-pie/512px/1f32e.png" width="60px" style="background-color:transparent;" draggable="true" ondragstart="drag(event)" id="drag1">
@@ -242,6 +248,8 @@ function likeMyPet(e) {
         <li><p hidden>${petJson.dead}</p></li>
       </ul>
       `
+      setTimeout(removePulsateHeart, 2010)
+      
     })
   // }
 }
