@@ -196,7 +196,7 @@ function gotchiGame(userId, currentPet) {
       <div class="noselect" id="the-pet" data-id=${currentPet.id} ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
 
     `
-    background()
+    // background()
     rightContainer.innerHTML = `
     <ul class="pet-stats-container">
       <li id="pet-stat-1-love" data-id=${currentPet.id} class="pet-stats-item noselect">❤️</li>
@@ -521,6 +521,6 @@ function gameOver(pet) {
   rightContainer.className = "grayOut"
 }
 
-function background() {
-  innerContainer.innerHTML += `<div class="grass"></div>`
-}
+// function background() {
+//   innerContainer.innerHTML += `<div class="grass"></div>`
+// }
