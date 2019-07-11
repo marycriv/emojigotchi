@@ -14,10 +14,13 @@ class PetsController < ApplicationController
     pet = Pet.find_by(user_id: params[:user_id], name: params[:name])
     if !pet
       pet = Pet.create(pet_params)
+      render json: pet.to_json(:include => {
+        :user => {:only => [:id, :username]}
+        }, :except => [:created_at, :updated_at])
+    else
+      render :json => { :errors => "That name is already taken.  Please pick another name." }
     end
-    render json: pet.to_json(:include => {
-    :user => {:only => [:id, :username]}
-    }, :except => [:created_at, :updated_at])
+    
   end
 
   def edit

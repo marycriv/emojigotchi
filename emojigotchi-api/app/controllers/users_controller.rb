@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   def index
     users = User.all
     render json: users.to_json(:include => {
-    :pets => {:only => [:id, :name, :user_id]}
+    :pets => {:only => [:id, :name, :user_id, :dead]}
     }, :except => [:created_at, :updated_at])
   end
 
@@ -12,7 +12,9 @@ class UsersController < ApplicationController
 
   def create
     user = User.find_or_create_by(user_params)
-    render json: user
+    render json: user.to_json(:include => {
+      :pets => {:only => [:id, :name, :user_id, :dead]}
+      }, :except => [:created_at, :updated_at])
   end
 
 private

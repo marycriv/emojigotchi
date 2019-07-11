@@ -87,9 +87,6 @@ function newUserOrLogIn(e) {
 }
 
 function nameYourGotchiScreen(userInfo) {
-  fetch("http://localhost:3000/pets")
-  .then(resp => resp.json())
-  .then(petsJson => {
     innerContainer.innerHTML =
       `
       <div class="nes-field is-inline">
@@ -113,11 +110,10 @@ function nameYourGotchiScreen(userInfo) {
       <br>
       <button id="selector-btn" type="button" class="nes-btn is-success">Select prev pet</button>
     `
-    petCemetery(petsJson, userInfo)
+    petCemetery(userInfo)
 
     let counter = 0
-    petsJson.forEach(function(element) {
-      if (element.user_id === userInfo.id) {
+    userInfo.pets.forEach(function(element) {
         if (element.dead === false){
           document.getElementById("success_select").innerHTML += `
           <option id="${element.id}" value="${counter}">${element.name}</option>
@@ -125,16 +121,13 @@ function nameYourGotchiScreen(userInfo) {
           counter += 1
 
         }
-      }
-    });
-
     })
 }
 
-function petCemetery(petsJson, userInfo) {
+function petCemetery(userInfo) {
 
   let deadPetExist = 0;
-  petsJson.forEach(function(element){
+  userInfo.pets.forEach(function(element){
     if (element.user_id === userInfo.id) {
       if (element.dead === true){
         usersDeadPets.push(element.name)
@@ -475,12 +468,10 @@ function rpsWinner(petChoice, userChoice) {
 
 function gotchiNameSubmit(e) {
     e.preventDefault()
-    let userIdFromHeader = wholeAppHeader.getElementsByClassName('hiddenuserid')[0].innerText
     const petName = {
       "name": e.target.form.name.value,
-      "user_id": userIdFromHeader
+      "user_id": currentUserId
     }
-
     if (e.target.form.name.value.length >= 2 && e.target.form.name.value.length <= 20) {
     fetch("http://localhost:3000/pets", {
       method: "POST",
@@ -492,11 +483,13 @@ function gotchiNameSubmit(e) {
       })
     .then(resp => resp.json())
     .then(petsJson => {
-      if (petsJson.dead) {
+      if (petsJson.errors){
+        wholeAppHeader.innerHTML = petsJson.errors
+      }
+      else if(petsJson.dead) {
         wholeAppHeader.innerHTML = "Please create a new pet or pick one that's alive."
       }
       else {
-        console.log(petsJson)
         currentPetId = petsJson.id
         console.log(petsJson.user)
         wholeAppHeader.innerHTML = `
@@ -508,7 +501,8 @@ function gotchiNameSubmit(e) {
         //Calls on gotchi game function with user & pet ids
         gotchiGame(currentUserId, petsJson)
       }
-    }) // end petsJson
+    })
+     // end petsJson
   } else {
     alert('Name must be between 2 and 20 characters.')
   }
