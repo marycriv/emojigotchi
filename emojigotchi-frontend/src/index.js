@@ -58,11 +58,12 @@ petContainer.addEventListener('submit', e => {
 
 function newUserOrLogIn(e) {
   e.preventDefault()
+
   const username = {
       "username": e.target.username.value
   }
 
-  if (e.target.username.value.length >= 2 && e.target.username.value.length <= 20) {
+  if (e.target.username.value.length >= 2 && e.target.username.value.length <= 20 && e.target.username.value != 'bepis') {
     fetch("http://localhost:3000/users", {
         method: "POST",
         headers: {
@@ -81,6 +82,8 @@ function newUserOrLogIn(e) {
       // add error catch
         nameYourGotchiScreen(userJson)
       })
+    } else if (e.target.username.value === 'bepis') {
+      window.location.href = "https://cwacht.github.io/nyancat/";
     } else {
       alert('Username must be between 2 and 20 characters.')
     }
