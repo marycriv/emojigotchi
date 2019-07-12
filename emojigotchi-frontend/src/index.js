@@ -169,8 +169,7 @@ function nameSelectedFromDropdown(e) {
         selection.id = petsJson.id
         wholeAppHeader.innerHTML = `
         <b>Username:</b> ${petsJson.user.username} ▪️
-        <b>Pet name:</b> ${petsJson.name} ▪️
-        <b>Pet id:</b> ${selection.id}
+        <b>Pet name:</b> ${petsJson.name}
         <p hidden>${petsJson.dead}</p>
         `
         //Calls on gotchi game function with user & pet ids
@@ -218,7 +217,7 @@ function removePulsateHeart() {
 function likeMyPet(e) {
   e.preventDefault()
   // if (e.target.id === "the-pet" || e.target.id === "pet-stat-1-love") {
-    
+
     let currentLevel = parseInt(document.querySelector("#level").innerText)
     fetch(`http://localhost:3000/pets/${e.target.dataset.id}`, {
         method: "PATCH",
@@ -232,7 +231,7 @@ function likeMyPet(e) {
     })
     .then(resp => resp.json())
     .then(petJson => {
-      
+
       innerContainer.innerHTML = `
         <div id="the-pet" class="noselect animated wobble" data-id=${petJson.id}  ondrop="drop(event)" ondragover="allowDrop(event)">😀</div>
         <h2 id="love-msg"> I Love You Too! +3 </h2>
@@ -251,7 +250,7 @@ function likeMyPet(e) {
       </ul>
       `
       setTimeout(removePulsateHeart, 2010)
-      
+
     })
   // }
 }
@@ -447,7 +446,7 @@ function removeRPSResult() {
 }
 
 function renderRPSResult(petChoice, userChoice) {
-  
+
   document.querySelector("#play-msg").remove()
   const theWinner = rpsWinner(petChoice, userChoice)
     innerContainer.innerHTML += `<div id="rps-result">
@@ -516,8 +515,7 @@ function gotchiNameSubmit(e) {
         console.log(petsJson.user)
         wholeAppHeader.innerHTML = `
         <b>Username:</b> ${petsJson.user.username} ▪️
-        <b>Pet name:</b> ${petsJson.name} ▪️
-        <b>Pet id:</b> ${currentPetId}
+        <b>Pet name:</b> ${petsJson.name}
         <p hidden>${petsJson.dead}</p>
         `
         //Calls on gotchi game function with user & pet ids

@@ -42,7 +42,9 @@
 
 #the-pet {
   margin: auto;
-  font-size: 100px;
+  margin-top: 15%;
+  text-shadow: 4px 4px 4px grey;
+  font-size: 200px;
   text-align: center;
 }
 
