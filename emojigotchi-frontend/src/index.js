@@ -369,10 +369,11 @@ if (theLevel) {
 
 function playRPS() {
 
-  const playMsgElement = document.createElement("h5")
+  const playMsgElement = document.createElement("h3")
   playMsgElement.innerText = playMsg
   innerContainer.insertBefore(playMsgElement, innerContainer.firstChild)
   const thePet = document.querySelector("#the-pet")
+  thePet.style="margin-top:0px"
   thePet.innerText = '🤔💭'
   innerContainer.innerHTML += `<div id="play-msg"><p>is thinking...</p>
   <h5>What do you choose?</h5>
@@ -443,6 +444,7 @@ function increaseLevelFromRPS(result) {
 }
 
 function removeRPSResult() {
+  document.querySelector("#the-pet").style= ""
   document.querySelector("#rps-msg").remove()
   document.querySelector("#rps-result").remove()
   document.querySelector("#the-pet").innerText = '😀'
