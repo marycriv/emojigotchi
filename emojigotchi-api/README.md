@@ -1,24 +1,5 @@
-# README
+# Emojigotchi
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Ruby/Rails backend for **Emojigotchi**, a tamagotchi-style vanilla JS app where you keep an emoji as a pet.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Run `bundle install` and then `rails s` to start the program.
